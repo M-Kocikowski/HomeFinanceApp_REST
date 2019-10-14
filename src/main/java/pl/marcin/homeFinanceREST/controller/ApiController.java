@@ -3,8 +3,8 @@ package pl.marcin.homeFinanceREST.controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.marcin.homeFinanceREST.entity.Operation;
-import pl.marcin.homeFinanceREST.repository.OperationsRepository;
-import pl.marcin.homeFinanceREST.services.XMLToDatabase;
+import pl.marcin.homeFinanceREST.services.DbOperations;
+import pl.marcin.homeFinanceREST.services.XMLToEntity;
 import pl.marcin.homeFinanceREST.xmlModel.XMLOperation;
 
 import javax.xml.bind.JAXBException;
@@ -16,27 +16,24 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class ApiController {
 
-    private XMLToDatabase xmlToDatabase;
+    private XMLToEntity xmlToEntity;
+    private DbOperations dbOperations;
 
-    private OperationsRepository repository;
-
-    public ApiController(XMLToDatabase xmlToDatabase, OperationsRepository repository) {
-        this.xmlToDatabase = xmlToDatabase;
-        this.repository = repository;
+    public ApiController(XMLToEntity xmlToEntity, DbOperations dbOperations) {
+        this.xmlToEntity = xmlToEntity;
+        this.dbOperations = dbOperations;
     }
 
-    @PostMapping("/file")
+    @PostMapping("/post/file")
     public String fileHandler(@RequestParam("file") MultipartFile file) throws JAXBException, IOException {
-        List<XMLOperation> xmlOperations = xmlToDatabase.convertXMLToOperations(file);
-        List<Operation> operationsFromXML = xmlToDatabase.getOperationsFromXML(xmlOperations);
-        xmlToDatabase.saveOperationToDatabase(operationsFromXML);
+        List<XMLOperation> xmlOperations = xmlToEntity.convertXMLToOperations(file);
+        List<Operation> operationsFromXML = xmlToEntity.getOperationsFromXML(xmlOperations);
+        dbOperations.saveOperationToDatabase(operationsFromXML);
         return "OK";
     }
 
-    @GetMapping("/operations")
-    public List<Operation> getAllOperations(){
-        List<Operation> operationsOrderByOrderDateDesc = repository.findOperationsOrderByOrderDateDesc();
-        operationsOrderByOrderDateDesc.forEach(a -> System.out.println(a.getDescription()));
-        return operationsOrderByOrderDateDesc;
+    @GetMapping("/operations/{fromDate}/{toDate}")
+    public List<Operation> getAllOperations(@PathVariable String fromDate, @PathVariable String toDate){
+        return dbOperations.getOperationsByDate(fromDate, toDate);
     }
 }
