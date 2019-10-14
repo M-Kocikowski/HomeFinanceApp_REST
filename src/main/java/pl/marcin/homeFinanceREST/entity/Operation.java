@@ -1,6 +1,7 @@
 package pl.marcin.homeFinanceREST.entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "operations")
@@ -11,7 +12,7 @@ public class Operation {
     private long id;
 
     private String type;
-    private String orderDate;
+    private LocalDate orderDate;
     private String description;
     private Double amount;
 
@@ -27,11 +28,11 @@ public class Operation {
         this.type = type;
     }
 
-    public String getOrderDate() {
+    public LocalDate getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(String orderDate) {
+    public void setOrderDate(LocalDate orderDate) {
         this.orderDate = orderDate;
     }
 
