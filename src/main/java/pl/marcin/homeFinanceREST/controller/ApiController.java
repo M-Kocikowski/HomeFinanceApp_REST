@@ -28,12 +28,24 @@ public class ApiController {
     public String fileHandler(@RequestParam("file") MultipartFile file) throws JAXBException, IOException {
         List<XMLOperation> xmlOperations = xmlToEntity.convertXMLToOperations(file);
         List<Operation> operationsFromXML = xmlToEntity.getOperationsFromXML(xmlOperations);
-        dbOperations.saveOperationToDatabase(operationsFromXML);
+        dbOperations.saveOperationsToDatabase(operationsFromXML);
         return "OK";
+    }
+
+    @PostMapping("/post")
+    public Operation saveSingleOperation(@RequestBody Operation operation){
+        dbOperations.saveSingleOperationToDatabase(operation);
+        return operation;
     }
 
     @GetMapping("/operations/{fromDate}/{toDate}")
     public List<Operation> getAllOperations(@PathVariable String fromDate, @PathVariable String toDate){
         return dbOperations.getOperationsByDate(fromDate, toDate);
     }
+
+    @GetMapping("/operation/{id}")
+    public Operation getSingleOperationById(@PathVariable long id){
+        return dbOperations.getSingleOperationById(id);
+    }
+
 }

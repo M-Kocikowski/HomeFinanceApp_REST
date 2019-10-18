@@ -16,12 +16,17 @@ public class DbOperations {
         this.repository = repository;
     }
 
-    public void saveOperationToDatabase(List<Operation> operations){
+    public void saveOperationsToDatabase(List<Operation> operations){
 
         operations.stream()
-                .filter(o -> repository.findOperationByOrderDateDescriptionAmount(o.getOrderDate(), o.getDescription(), o.getAmount()) == null)
+                .filter(this::checkIfOperationNotDuplicated)
                 .forEach(o -> repository.save(o));
+    }
 
+    public void saveSingleOperationToDatabase(Operation operation){
+        if (checkIfOperationNotDuplicated(operation)){
+            repository.save(operation);
+        }
     }
 
     public List<Operation> getOperationsByDate(String fromDate, String toDate){
@@ -29,5 +34,20 @@ public class DbOperations {
         return repository.findOperationsByOrderDateOrderByOrderDateDesc(
                 LocalDate.parse(fromDate), LocalDate.parse(toDate)
         );
+    }
+
+    public Operation getSingleOperationById(long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+
+    private boolean checkIfOperationNotDuplicated(Operation operationToCheck){
+        Operation checkOperationInDatabase = repository.findOperationByOrderDateDescriptionAmount(
+        operationToCheck.getOrderDate(),
+        operationToCheck.getDescription(),
+        operationToCheck.getAmount()
+        );
+        return checkOperationInDatabase == null;
+
     }
 }
