@@ -6,6 +6,7 @@ import pl.marcin.homeFinanceREST.repository.OperationsRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DbOperations {
@@ -18,9 +19,12 @@ public class DbOperations {
 
     public void saveOperationsToDatabase(List<Operation> operations){
 
-        operations.stream()
+        List<Operation> filteredOperations = operations.stream()
                 .filter(this::checkIfOperationNotDuplicated)
-                .forEach(o -> repository.save(o));
+                .collect(Collectors.toList());
+
+        repository.saveAll(filteredOperations);
+
     }
 
     public void saveSingleOperationToDatabase(Operation operation){

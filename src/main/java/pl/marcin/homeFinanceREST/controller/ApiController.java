@@ -43,6 +43,12 @@ public class ApiController {
         return dbOperations.getOperationsByDate(fromDate, toDate);
     }
 
+    @PutMapping("/put/{id}")
+    public Operation updateSingleOperation(@RequestBody Operation operation){
+        dbOperations.saveSingleOperationToDatabase(operation);
+        return operation;
+    }
+
     @GetMapping("/operation/{id}")
     public Operation getSingleOperationById(@PathVariable long id){
         return dbOperations.getSingleOperationById(id);
