@@ -1,10 +1,14 @@
 package pl.marcin.homeFinanceREST.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "operations")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Operation {
 
     @Id
@@ -15,6 +19,9 @@ public class Operation {
     private LocalDate orderDate;
     private String description;
     private Double amount;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Category category;
 
     public long getId() {
         return id;
@@ -50,5 +57,13 @@ public class Operation {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
