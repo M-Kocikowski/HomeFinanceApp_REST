@@ -33,7 +33,7 @@ public class OperationsServices {
 
     }
 
-    public List<Operation> getOperationsFromXML(List<XMLOperation> xmlOperations){
+    public List<Operation> getOperationsFromXML(List<XMLOperation> xmlOperations) {
 
         List<Operation> operations = new ArrayList<>();
         for (XMLOperation o : xmlOperations) {
@@ -49,7 +49,7 @@ public class OperationsServices {
         return operations;
     }
 
-    public void saveOperationsToDatabase(List<Operation> operations){
+    public void saveOperationsToDatabase(List<Operation> operations) {
 
         List<Operation> filteredOperations = operations.stream()
                 .filter(this::checkIfOperationNotDuplicated)
@@ -59,13 +59,13 @@ public class OperationsServices {
 
     }
 
-    public void saveSingleOperationToDatabase(Operation operation){
-        if (checkIfOperationNotDuplicated(operation)){
+    public void saveSingleOperationToDatabase(Operation operation) {
+        if (checkIfOperationNotDuplicated(operation)) {
             repository.save(operation);
         }
     }
 
-    public List<Operation> getOperationsByDate(String fromDate, String toDate){
+    public List<Operation> getOperationsByDate(String fromDate, String toDate) {
 
         return repository.findOperationsByOrderDateOrderByOrderDateDesc(
                 LocalDate.parse(fromDate), LocalDate.parse(toDate)
@@ -76,8 +76,11 @@ public class OperationsServices {
         return repository.findById(id).orElse(null);
     }
 
+    public void deleteOperation(long id){
+        repository.deleteById(id);
+    }
 
-    private boolean checkIfOperationNotDuplicated(Operation operationToCheck){
+    private boolean checkIfOperationNotDuplicated(Operation operationToCheck) {
         Operation checkOperationInDatabase = repository.findOperationByOrderDateDescriptionAmount(
                 operationToCheck.getOrderDate(),
                 operationToCheck.getDescription(),

@@ -51,4 +51,9 @@ public class ApiOperationsController {
         return operationsServices.getSingleOperationById(id);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public void deleteSingleOperation(@PathVariable long id){
+        operationsServices.deleteOperation(id);
+    }
+
 }
