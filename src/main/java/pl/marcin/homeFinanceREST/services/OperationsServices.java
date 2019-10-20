@@ -59,10 +59,11 @@ public class OperationsServices {
 
     }
 
-    public void saveSingleOperationToDatabase(Operation operation) {
+    public Operation saveSingleOperationToDatabase(Operation operation) {
         if (checkIfOperationNotDuplicated(operation)) {
-            repository.save(operation);
+            return repository.save(operation);
         }
+        return null;
     }
 
     public List<Operation> getOperationsByDate(String fromDate, String toDate) {

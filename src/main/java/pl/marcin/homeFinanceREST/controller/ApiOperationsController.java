@@ -31,8 +31,7 @@ public class ApiOperationsController {
 
     @PostMapping("/post")
     public Operation saveSingleOperation(@RequestBody Operation operation){
-        operationsServices.saveSingleOperationToDatabase(operation);
-        return operation;
+        return operationsServices.saveSingleOperationToDatabase(operation);
     }
 
     @GetMapping("/{fromDate}/{toDate}")
