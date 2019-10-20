@@ -1,14 +1,12 @@
 package pl.marcin.homeFinanceREST.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "categories")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Category {
 
     @Id
@@ -17,6 +15,7 @@ public class Category {
 
     private String name;
 
+    @JsonBackReference
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     private List<Operation> operations;
 
