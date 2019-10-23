@@ -32,5 +32,8 @@ public class ApiCategoriesController {
         return categoriesServices.saveCategoryToDatabase(category);
     }
 
-
+    @PutMapping("/put/{id}")
+    public Category updateCategory(@RequestBody Category category){
+        return categoriesServices.saveCategoryToDatabase(category);
+    }
 }
