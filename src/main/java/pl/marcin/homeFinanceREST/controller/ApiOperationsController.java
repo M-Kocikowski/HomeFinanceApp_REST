@@ -30,28 +30,27 @@ public class ApiOperationsController {
     }
 
     @PostMapping("/post")
-    public Operation saveSingleOperation(@RequestBody Operation operation){
-        return operationsServices.saveSingleOperationToDatabase(operation);
+    public Operation saveSingleOperation(@RequestBody Operation operation) {
+        return operationsServices.saveSingleOperationToDatabase(operation, false);
     }
 
     @GetMapping("/{fromDate}/{toDate}")
-    public List<Operation> getAllOperations(@PathVariable String fromDate, @PathVariable String toDate){
+    public List<Operation> getAllOperations(@PathVariable String fromDate, @PathVariable String toDate) {
         return operationsServices.getOperationsByDate(fromDate, toDate);
     }
 
     @PutMapping("/put/{id}")
-    public Operation updateSingleOperation(@RequestBody Operation operation){
-        operationsServices.saveSingleOperationToDatabase(operation);
-        return operation;
+    public Operation updateSingleOperation(@RequestBody Operation operation) {
+        return operationsServices.saveSingleOperationToDatabase(operation, true);
     }
 
     @GetMapping("/{id}")
-    public Operation getSingleOperationById(@PathVariable long id){
+    public Operation getSingleOperationById(@PathVariable long id) {
         return operationsServices.getSingleOperationById(id);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteSingleOperation(@PathVariable long id){
+    public void deleteSingleOperation(@PathVariable long id) {
         operationsServices.deleteOperation(id);
     }
 

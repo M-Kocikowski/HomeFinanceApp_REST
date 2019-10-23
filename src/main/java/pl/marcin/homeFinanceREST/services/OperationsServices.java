@@ -59,8 +59,10 @@ public class OperationsServices {
 
     }
 
-    public Operation saveSingleOperationToDatabase(Operation operation) {
-        if (checkIfOperationNotDuplicated(operation)) {
+    public Operation saveSingleOperationToDatabase(Operation operation, boolean isUpdate) {
+        if (checkIfOperationNotDuplicated(operation) && !isUpdate) {
+            return repository.save(operation);
+        }else if (isUpdate){
             return repository.save(operation);
         }
         return null;
