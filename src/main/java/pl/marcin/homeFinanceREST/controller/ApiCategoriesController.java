@@ -1,6 +1,7 @@
 package pl.marcin.homeFinanceREST.controller;
 
 import org.springframework.web.bind.annotation.*;
+import pl.marcin.homeFinanceREST.entity.CategorizedItem;
 import pl.marcin.homeFinanceREST.entity.Category;
 import pl.marcin.homeFinanceREST.services.CategoriesServices;
 
@@ -30,6 +31,11 @@ public class ApiCategoriesController {
     @PostMapping("/post")
     public Category saveCategory(@RequestBody Category category){
         return categoriesServices.saveCategoryToDatabase(category);
+    }
+
+    @PostMapping("item/post")
+    public CategorizedItem saveItem(@RequestBody CategorizedItem item){
+        return categoriesServices.saveItemCategorization(item);
     }
 
     @PutMapping("/put/{id}")

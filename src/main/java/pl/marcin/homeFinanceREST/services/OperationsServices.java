@@ -2,7 +2,9 @@ package pl.marcin.homeFinanceREST.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pl.marcin.homeFinanceREST.entity.CategorizedItem;
 import pl.marcin.homeFinanceREST.entity.Operation;
+import pl.marcin.homeFinanceREST.repository.CategorizedItemRepository;
 import pl.marcin.homeFinanceREST.repository.OperationsRepository;
 import pl.marcin.homeFinanceREST.xmlModel.XMLAccountHistory;
 import pl.marcin.homeFinanceREST.xmlModel.XMLOperation;
@@ -18,10 +20,13 @@ import java.util.stream.Collectors;
 @Service
 public class OperationsServices {
 
-    private OperationsRepository repository;
+    private OperationsRepository operationsRepository;
 
-    public OperationsServices(OperationsRepository repository) {
-        this.repository = repository;
+    private CategorizedItemRepository itemRepository;
+
+    public OperationsServices(OperationsRepository operationsRepository, CategorizedItemRepository itemRepository) {
+        this.operationsRepository = operationsRepository;
+        this.itemRepository = itemRepository;
     }
 
     public List<XMLOperation> convertXMLToOperations(MultipartFile file) throws JAXBException, IOException {
@@ -51,46 +56,59 @@ public class OperationsServices {
 
     public void saveOperationsToDatabase(List<Operation> operations) {
 
+        List<CategorizedItem> items = itemRepository.findAll();
+
         List<Operation> filteredOperations = operations.stream()
                 .filter(this::checkIfOperationNotDuplicated)
+                .map(o -> categorizeOperation(o, items))
                 .collect(Collectors.toList());
 
-        repository.saveAll(filteredOperations);
+        operationsRepository.saveAll(filteredOperations);
 
     }
 
     public Operation saveSingleOperationToDatabase(Operation operation, boolean isUpdate) {
         if (checkIfOperationNotDuplicated(operation) && !isUpdate) {
-            return repository.save(operation);
+            return operationsRepository.save(operation);
         }else if (isUpdate){
-            return repository.save(operation);
+            return operationsRepository.save(operation);
         }
         return null;
     }
 
     public List<Operation> getOperationsByDate(String fromDate, String toDate) {
 
-        return repository.findOperationsByOrderDateOrderByOrderDateDesc(
+        return operationsRepository.findOperationsByOrderDateOrderByOrderDateDesc(
                 LocalDate.parse(fromDate), LocalDate.parse(toDate)
         );
     }
 
     public Operation getSingleOperationById(long id) {
-        return repository.findById(id).orElse(null);
+        return operationsRepository.findById(id).orElse(null);
     }
 
     public void deleteOperation(long id){
-        repository.deleteById(id);
+        operationsRepository.deleteById(id);
     }
 
     private boolean checkIfOperationNotDuplicated(Operation operationToCheck) {
-        Operation checkOperationInDatabase = repository.findOperationByOrderDateDescriptionAmount(
+        Operation checkOperationInDatabase = operationsRepository.findOperationByOrderDateDescriptionAmount(
                 operationToCheck.getOrderDate(),
                 operationToCheck.getDescription(),
                 operationToCheck.getAmount()
         );
         return checkOperationInDatabase == null;
+    }
 
+    private Operation categorizeOperation(Operation operation, List<CategorizedItem> items){
+
+        for (CategorizedItem item : items){
+            if (operation.getDescription().toLowerCase().contains(item.getItem().toLowerCase())){
+                operation.setCategory(item.getCategory());
+                return operation;
+            }
+        }
+        return operation;
     }
 
 
