@@ -15,9 +15,13 @@ public class Category {
 
     private String name;
 
-    @JsonBackReference
+    @JsonBackReference("category")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     private List<Operation> operations;
+
+    @JsonBackReference("itemCategory")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<CategorizedItem> items;
 
     public long getId() {
         return id;
@@ -37,5 +41,13 @@ public class Category {
 
     public void setOperations(List<Operation> operations) {
         this.operations = operations;
+    }
+
+    public List<CategorizedItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<CategorizedItem> items) {
+        this.items = items;
     }
 }
